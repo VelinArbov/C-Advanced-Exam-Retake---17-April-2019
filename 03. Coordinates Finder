@@ -1,0 +1,70 @@
+using System;
+using System.Collections.Generic;
+using System.Text.RegularExpressions;
+
+namespace ConsoleApp1
+{
+    class Program
+    {
+        static void Main(string[] args)
+        {
+            string cordinit = string.Empty;
+            string name = string.Empty;
+            string lenghts = string.Empty;
+            string newName = string.Empty;
+            var namePattern = new Regex(@"^(?<name>[A-Za-z0-9^!@#$?]*)=(?<duljina>[0-9]*)<<(\w*)$");
+            int newlenght = 0;
+            while (true)
+            {
+                string input = Console.ReadLine();
+                if (input == "Last note")
+                {
+                    break;
+                }
+
+                
+                MatchCollection words = namePattern.Matches(input);
+                if (words.Count > 0)
+                {
+                    foreach (Match ITEM in words)
+                    {
+
+                        name = ITEM.Groups[2].ToString();
+                        lenghts = ITEM.Groups[3].ToString();
+                        cordinit = ITEM.Groups[1].ToString();
+                        for (int i = 0; i < name.Length; i++)
+                        {
+                            char currentChar = name[i];
+                            if (char.IsLetterOrDigit(currentChar))
+                            {
+                                newName += currentChar;
+                            }
+                        }
+                    }
+                    newlenght = int.Parse(lenghts);
+                    if (newlenght!= cordinit.Length)
+                    {
+                        Console.WriteLine("Nothing found!");
+                    }
+                    else
+                    {
+                        Console.WriteLine($"Coordinates found! {newName} -> {cordinit}");
+                    }
+
+                }
+                else
+                {
+                    Console.WriteLine("Nothing found!");
+
+                }
+
+
+
+
+                newlenght = 0;
+                newName = string.Empty;
+
+            }
+        }
+    }
+}
