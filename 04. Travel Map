@@ -1,0 +1,66 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+
+namespace Travel_Map
+{
+    class Program
+    {
+        static void Main(string[] args)
+        {
+            string input = Console.ReadLine();
+            Dictionary<string, Dictionary<string, int>> travelMap = new Dictionary<string, Dictionary<string, int>>();
+
+            while (input != "END")
+            {
+                string[] tokens = input.Split('>');
+                string country = tokens[0];
+                string town = tokens[1];
+                int coast = int.Parse(tokens[2]);
+                if (!travelMap.ContainsKey(country))
+                {
+                    travelMap[country] = new Dictionary<string, int>();
+                    travelMap[country][town] = coast;
+
+                }
+                else
+                {
+                    if (travelMap[country].ContainsKey(town))
+                    {
+                        if (travelMap[country][town] > coast)
+                        {
+                            travelMap[country][town] = coast;
+                        }
+                    }
+                    else
+                    {
+                        travelMap[country].Add(town, coast);
+                    }
+
+
+
+                }
+
+
+
+                        //Albania->Tirana-> 1000
+                        //Bulgaria->Sofia-> 200 Sopot-> 800
+                        //France->Paris-> 2000
+
+
+                input = Console.ReadLine();
+            }
+            foreach (var item in travelMap.OrderBy(x => x.Key))
+            {
+
+                Console.Write($"{item.Key}->");
+                foreach (var town in item.Value.OrderBy(x => x.Value))
+                {//Bulgaria -> Sofia -> 200-> Sopot -> 800
+                    Console.Write($"{town.Key}-> {town.Value}");
+                }
+                Console.WriteLine();
+
+            }
+        }
+    }
+}
