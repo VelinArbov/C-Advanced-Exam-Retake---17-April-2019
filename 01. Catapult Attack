@@ -1,0 +1,110 @@
+using System;
+using System.Linq;
+using System.Text;
+using System.Collections.Generic;
+using System.Text.RegularExpressions;
+
+namespace Exercise
+{
+    class Program
+    {
+        public static void Main()
+        {
+            int waves = int.Parse(Console.ReadLine());
+
+            var plates = Console.ReadLine()
+                .Split(" ", StringSplitOptions.RemoveEmptyEntries)
+                .Select(int.Parse)
+                .ToArray();
+
+            var spartanPlates = new Queue<int>(plates);
+            var trojanWarriors = new Stack<int>();
+
+            for (int i = 1; i <= waves; i++)
+            {
+                var powers = Console.ReadLine()
+                    .Split(" ", StringSplitOptions.RemoveEmptyEntries)
+                    .Select(int.Parse)
+                    .ToArray();
+
+                foreach (var power in powers)
+                {
+                    trojanWarriors.Push(power);
+                }
+
+                if (i % 3 == 0)
+                {
+                    int extraPlate = int.Parse(Console.ReadLine());
+                    spartanPlates.Enqueue(extraPlate);
+                }
+
+                while (spartanPlates.Any() && trojanWarriors.Any())
+                {
+                    int currentWarrior = trojanWarriors.Peek();
+                    int currentPlate = spartanPlates.Peek();
+
+                    if (currentWarrior > currentPlate)
+                    {
+                        currentWarrior -= spartanPlates.Dequeue();
+
+                        trojanWarriors.Pop();
+
+                        if (currentWarrior > 0)
+                        {
+                            trojanWarriors.Push(currentWarrior);
+                        }
+                    }
+                    else if (currentWarrior < currentPlate)
+                    {
+                        currentPlate -= trojanWarriors.Pop();
+
+                        spartanPlates.Dequeue();
+
+                        if (currentPlate > 0)
+                        {
+                            var additionalPlates = new Queue<int>();
+
+                            ChangeCurrentPlateValue(spartanPlates, currentPlate, additionalPlates);
+                        }
+                    }
+                    else if (currentWarrior == currentPlate)
+                    {
+                        trojanWarriors.Pop();
+                        spartanPlates.Dequeue();
+                    }
+                }
+
+                if (spartanPlates.Count == 0)
+                {
+                    break;
+                }
+            }
+
+            if (trojanWarriors.Any() && spartanPlates.Count == 0)
+            {
+               
+                Console.WriteLine($"Rocks left: {string.Join(", ", trojanWarriors)}");
+            }
+            else if (spartanPlates.Any() && trojanWarriors.Count == 0)
+            {
+               
+                Console.WriteLine($"Walls left: {string.Join(", ", spartanPlates)}");
+            }
+        }
+
+        private static void ChangeCurrentPlateValue(Queue<int> currentQueue, int currentPlate, Queue<int> newQueue)
+        {
+            while (currentQueue.Any())
+            {
+                newQueue.Enqueue(currentQueue.Dequeue());
+            }
+
+            currentQueue.Enqueue(currentPlate);
+
+            foreach (var plate in newQueue)
+            {
+                currentQueue.Enqueue(plate);
+            }
+        }
+    }
+}
